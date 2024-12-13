@@ -9,6 +9,7 @@ data TinderView = TinderView
     , selectedSubCategory :: Maybe Text
     , allCategories :: [Text]
     , allSubCategories :: [Text]
+    , search :: Maybe Text
     }
 
 instance View TinderView where
@@ -18,6 +19,8 @@ instance View TinderView where
         <h1 class="mb-4">
           Keepers
         </h1>
+
+          {renderForm search}
         <!-- Categories -->
         <div class="row mb-4">
           {forEach allCategories (\catname -> renderCatCol catname selectedCategory)}
@@ -27,8 +30,11 @@ instance View TinderView where
           {forEach allSubCategories (\subcatname -> renderSubCatCol subcatname selectedSubCategory)}
         </div>
         <!-- Restaurants -->
+
         <div class="row">
-          {forEach restaurants renderRestaurantCol}
+          {if null restaurants 
+            then renderNoResults 
+            else forEach restaurants renderRestaurantCol}
         </div>
       </div>
     |]
@@ -60,7 +66,7 @@ renderRestaurantCol restaurant =
 renderRestaurant :: Restaurant -> Html
 renderRestaurant restaurant =
   let
-    categoryLink = TinderAction { category = Just (get #subcatname restaurant), subCategory = Nothing }
+    categoryLink = TinderAction { subCategory = Just (get #subcatname restaurant), category = Nothing, search=Nothing}
   in
   [hsx|
     <div class="card h-100">
@@ -82,7 +88,7 @@ renderRestaurant restaurant =
 renderCat :: Text -> Maybe Text -> Html
 renderCat catname activeCat =
   let 
-    categoryLink = TinderAction { category = Just catname, subCategory = Nothing } 
+    categoryLink = TinderAction { category = Just catname, subCategory = Nothing , search= Nothing} 
     color :: Text
     color = case activeCat of
       Just active | catname == active -> "badge bg-primary"
@@ -99,7 +105,7 @@ renderCat catname activeCat =
 renderSubCat :: Text -> Maybe Text -> Html
 renderSubCat subcatname activeSubCat =
   let
-    subCategoryLink = TinderAction { category = Nothing, subCategory = Just subcatname }
+    subCategoryLink = TinderAction { category = Nothing, subCategory = Just subcatname , search=Nothing}
     color :: Text
     color = case activeSubCat of
       Just active | subcatname == active -> "badge bg-primary"
@@ -112,4 +118,27 @@ renderSubCat subcatname activeSubCat =
         {subcatname}
       </a>
     </h5>   
+  |]
+
+renderForm :: Maybe Text-> Html
+renderForm search= 
+  let 
+    categoryLink = TinderAction { category = Nothing, subCategory = Nothing, search = Nothing } 
+  in
+  [hsx|
+    <form method="GET" action={categoryLink} class="mt-3">
+      <div class="input-group">
+        <input type="text" name="search" value={search}class="form-control" placeholder="Search..." />
+        <button type="submit" class="btn btn-primary">Search</button>
+      </div>
+    </form>
+  |]
+
+-- Render a message when no results are found
+renderNoResults :: Html
+renderNoResults =
+  [hsx|
+    <div class="text-center mt-5">
+      <h5>No Results :(</h5>
+    </div>
   |]

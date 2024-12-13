@@ -16,7 +16,7 @@ data RestaurantsController
   | EditRestaurantAction {restaurantId :: !(Id Restaurant)}
   | UpdateRestaurantAction {restaurantId :: !(Id Restaurant)}
   | DeleteRestaurantAction {restaurantId :: !(Id Restaurant)}
-  | TinderAction { category :: Maybe Text,  subCategory :: Maybe Text }
+  | TinderAction { category :: Maybe Text,  subCategory :: Maybe Text, search :: Maybe Text }
   deriving (Eq, Show, Data)
 
 data ClickThroughsController

@@ -9,7 +9,7 @@ CREATE TABLE restaurants (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     primary_category JSONB,
-    title TEXT,
+    title TEXT NOT NULL,
     address1 TEXT,
     url TEXT,
     latitude DOUBLE PRECISION,

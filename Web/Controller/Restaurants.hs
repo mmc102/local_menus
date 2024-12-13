@@ -9,27 +9,27 @@ import Web.View.Restaurants.New
 import Web.View.Restaurants.Show
 import Web.View.Restaurants.Tinder
 
+import qualified Prelude
+
 instance Controller RestaurantsController where
 
-  action TinderAction { category, subCategory } = do
+  action TinderAction { category, subCategory, search } = do
     allRestaurants <- query @Restaurant |> fetch
 
     let baseQuery = query @Restaurant
-    let filteredQuery =
-            case (category, subCategory) of
-                (Just cat, Just subCat) -> baseQuery |> queryOr (filterWhere (#catname, cat)) (filterWhere (#subcatname, subCat))
-                (Just cat, Nothing)     -> baseQuery |> filterWhere (#catname, cat)
-                (Nothing, Just subCat)  -> baseQuery |> filterWhere (#subcatname, subCat)
-                (Nothing, Nothing)      -> baseQuery
+    let filteredQuery = baseQuery
+            |> applyCategoryFilter category
+            |> applySubCategoryFilter subCategory
+            |> applySearchFilter search
+            |> orderByDesc (#qualityScore)
 
-    let orderedQuery = filteredQuery |> orderByDesc (#qualityScore)
     restaurants <- filteredQuery |> fetch
 
     let allCategories = Set.toList $ Set.fromList $ map (get #catname) allRestaurants
     let allSubCategories = Set.toList $ Set.fromList $ map (get #subcatname) allRestaurants
     let selectedSubCategory = subCategory
     let selectedCategory = category
-    render TinderView { .. } 
+    render TinderView { .. }
 
 
   action RestaurantsAction = do
@@ -74,3 +74,18 @@ buildRestaurant restaurant =
   restaurant
     |> fill @'["title"]
 
+
+-- Apply category filter if provided
+applyCategoryFilter :: Maybe Text -> QueryBuilder "restaurants" -> QueryBuilder "restaurants"
+applyCategoryFilter (Just cat) = filterWhere (#catname, cat)
+applyCategoryFilter Nothing = Prelude.id
+
+-- Apply subcategory filter if provided
+applySubCategoryFilter :: Maybe Text -> QueryBuilder "restaurants" -> QueryBuilder "restaurants"
+applySubCategoryFilter (Just subCat) = filterWhere (#subcatname, subCat)
+applySubCategoryFilter Nothing = Prelude.id
+
+
+applySearchFilter :: Maybe Text -> QueryBuilder "restaurants" -> QueryBuilder "restaurants"
+applySearchFilter (Just search) = filterWhereILike (#title, "%" <> search <> "%")
+applySearchFilter Nothing = Prelude.id

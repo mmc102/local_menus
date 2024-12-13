@@ -1,0 +1,3 @@
+
+ALTER TABLE restaurants
+ALTER COLUMN title SET NOT NULL;
