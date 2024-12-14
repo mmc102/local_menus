@@ -126,7 +126,7 @@ renderForm search=
     categoryLink = TinderAction { category = Nothing, subCategory = Nothing, search = Nothing } 
   in
   [hsx|
-    <form method="GET" action={categoryLink} class="mt-3">
+    <form method="GET" action={categoryLink} class="my-3">
       <div class="input-group">
         <input type="text" name="search" value={search}class="form-control" placeholder="Search..." />
         <button type="submit" class="btn btn-primary">Search</button>

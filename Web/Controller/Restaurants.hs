@@ -1,5 +1,4 @@
 module Web.Controller.Restaurants where
-
 import qualified Data.Set as Set
 
 import Web.Controller.Prelude
@@ -75,12 +74,10 @@ buildRestaurant restaurant =
     |> fill @'["title"]
 
 
--- Apply category filter if provided
 applyCategoryFilter :: Maybe Text -> QueryBuilder "restaurants" -> QueryBuilder "restaurants"
 applyCategoryFilter (Just cat) = filterWhere (#catname, cat)
 applyCategoryFilter Nothing = Prelude.id
 
--- Apply subcategory filter if provided
 applySubCategoryFilter :: Maybe Text -> QueryBuilder "restaurants" -> QueryBuilder "restaurants"
 applySubCategoryFilter (Just subCat) = filterWhere (#subcatname, subCat)
 applySubCategoryFilter Nothing = Prelude.id
