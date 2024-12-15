@@ -2,6 +2,7 @@ module Web.View.Restaurants.Tinder where
 import qualified Data.Set as Set
 
 import Web.View.Prelude
+import Web.View.ClickThroughs.Edit (EditView(clickThrough))
 
 data TinderView = TinderView
     { restaurants :: [Restaurant]
@@ -94,7 +95,7 @@ renderRestaurant restaurant =
     <div class="card h-100">
       <div class="card-body">
         <h5 class="card-title">{get #title restaurant}</h5>
-        <h5 class="card-title">{get #address1 restaurant}</h5>
+        <h5 >{get #address1 restaurant}</h5>
         <h5 class="badge bg-primary">
           <a href={categoryLink} class="text-white text-decoration-none">
             {get #subcatname restaurant}
