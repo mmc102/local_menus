@@ -10,9 +10,8 @@ import Web.View.Layout (defaultLayout)
 
 instance FrontController WebApplication where
   controllers =
-    [ startPage WelcomeAction,
+    [ startPage (TinderAction Nothing Nothing Nothing),
       -- Generator Marker
-      parseRoute @ClickThroughsController,
       parseRoute @RestaurantsController
     ]
 
