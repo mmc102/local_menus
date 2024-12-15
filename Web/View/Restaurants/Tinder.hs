@@ -17,15 +17,15 @@ instance View TinderView where
     [hsx|
       <div class="container my-5">
         <h1 class="mb-4">
-          Keepers
+          Restaurants
         </h1>
-
           {renderForm search}
-        <!-- Categories -->
-        <div class="row mb-4">
-          {forEach allCategories (\catname -> renderCatCol catname selectedCategory)}
-        </div>
         <!-- Subcategories -->
+        <div class="row mb-4">
+            {renderTags selectedSubCategory}
+            {renderTags search}
+            </div>
+
         <div class="row mb-4">
           {forEach allSubCategories (\subcatname -> renderSubCatCol subcatname selectedSubCategory)}
         </div>
@@ -39,18 +39,40 @@ instance View TinderView where
       </div>
     |]
 
-renderCatCol :: Text -> Maybe Text -> Html
-renderCatCol catname selectedCategory =
+renderTags :: Maybe Text -> Html
+renderTags tags = 
+  case tags of
+    Just t  -> renderActiveTags (Just t)
+    Nothing -> renderNothing
+
+
+renderNothing ::  Html
+renderNothing = 
+  [hsx|<div></div>|]
+
+renderActiveTags :: Maybe Text -> Html
+renderActiveTags tag =
+  let
+    categoryLink = TinderAction { category = Nothing, subCategory = Nothing, search = Nothing } 
+  in
   [hsx|
-    <div class="col-md-3 col-sm-6 mb-1">
-      {renderCat catname selectedCategory}
-    </div>
+    <form method="POST" data-turbo="true" action={categoryLink} class="d-inline-block">
+      <div class="badge bg-primary text-white d-inline-flex align-items-center">
+        <span class="me-2">{tag}</span>
+        <button type="submit" class="btn btn-sm text-white border-0 p-0 ms-1" style="font-size: 0.8rem; line-height: 1; padding: 0 4px;">
+          X
+        </button>
+      </div>
+    </form>
   |]
+
+
+
 
 renderSubCatCol :: Text -> Maybe Text -> Html
 renderSubCatCol subcatname selectedSubCategory =
   [hsx|
-    <div class="col-md-3 col-sm-6 mb-1">
+    <div class="col-6 col-sm-3 mb-1">
       {renderSubCat subcatname selectedSubCategory}
     </div>
   |]

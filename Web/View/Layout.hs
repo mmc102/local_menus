@@ -18,7 +18,7 @@ defaultLayout inner = [hsx|
         {stylesheets}
         {scripts}
 
-        <title>{pageTitleOrDefault "App"}</title>
+        <title>{pageTitleOrDefault "Simple Listing"}</title>
     </head>
     <body>
         <div class="container mt-4">
